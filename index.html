@@ -1,14 +1,305 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Lock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #1D1B3C;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #D5D5D5;
+            width: 100%;
+            max-width: 380px;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #1D1B3C;
+            font-weight: 600;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            background: #F0F0F0;
+        }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #99D9EA;
+            box-shadow: 0 0 0 2px rgba(153, 217, 234, 0.3);
+            background: white;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #99D9EA;
+            color: #1D1B3C;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #7BC8E3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .secondary-btn {
+            background: #C5C5C5;
+            border: 2px solid #99D9EA;
+            color: #1D1B3C;
+        }
+        .secondary-btn:hover {
+            background: #B5B5B5;
+        }
+        .message {
+            text-align: center;
+            padding: 15px;
+            background: rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #1D1B3C;
+            font-weight: 500;
+        }
+        .success-message {
+            text-align: center;
+            padding: 15px;
+            background: rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #1D1B3C;
+            font-weight: 500;
+        }
+        .lock-status {
+            text-align: center;
+            padding: 15px;
+            background: rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #1D1B3C;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        .lock-status.open {
+            background: rgba(46, 204, 113, 0.3);
+        }
+        .lock-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .action-buttons button {
+            flex: 1;
+        }
+        .open-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        .open-btn:hover {
+            background: #27ae60;
+        }
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        .close-btn:hover {
+            background: #c0392b;
+        }
+    </style>
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+    <div class="container">
+        <div class="page active" id="page1">
+            <h1>Guardian Lock</h1>
+            <form id="formLogin">
+                <div class="input-group">
+                    <input type="password" placeholder="Sua senha" required id="loginPassword">
+                </div>
+                <button type="submit">Abrir a fechadura</button>
+            </form>
+            <button class="secondary-btn" onclick="showPage('page2')">Esqueceu a sua senha?</button>
+        </div>
+       
+        <div class="page" id="page2">
+            <h1>Confirme sua senha atual</h1>
+            <form id="checkPasswordForm">
+                <div class="input-group">
+                   <input type="password" placeholder="Digite sua senha atual" required id="checkPasswordInput">
+                </div>
+                <button type="submit">Modificar a senha</button>
+            </form>
+            <button class="secondary-btn" onclick="showPage('page1')">Voltar</button>
+         </div>
+
+        <div class="page" id="page3">
+            <h1>Trocar Senha</h1>
+            <form id="formNewPassword">
+                <div class="input-group">
+                    <input type="password" placeholder="Nova senha" required id="newPassword">
+                    <input type="password" placeholder="Confirmar nova senha" required id="confirmPassword">
+                </div>
+                <button type="submit">Alterar Senha</button>
+            </form>
+            <button class="secondary-btn" onclick="showPage('page1')">Voltar</button>
+        </div>
+
+        <div class="page" id="page4">
+            <h1>Controle da Fechadura</h1>
+            <div class="lock-status" id="lockStatus">
+                Fechadura: TRANCADA
+            </div>
+            <div class="action-buttons">
+                <button class="open-btn" onclick="controlarTrava('abrir')">Abrir a fechadura</button>
+                <button class="close-btn" onclick="controlarTrava('fechar')">Trancar a fechadura</button>
+            </div>
+            <button class="secondary-btn" onclick="showPage('page1')">Voltar</button>
+        </div>
+
+        <div class="page" id="page5">
+            <h1>Guardian Lock</h1>
+            <div class="message">
+                Sua senha foi alterada com sucesso!
+            </div>
+            <button onclick="showPage('page1')">Login</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPassword = "1234";
+        let isLockOpen = false;
+        
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            if (pageId === 'page1') {
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                document.getElementById('checkPasswordInput').value = '';
+            }
+            
+            if (pageId === 'page4') {
+                verificarStatus();
+            }
+        }
+
+        function controlarTrava(acao) {
+            fetch('/' + acao)
+                .then(response => response.json())
+                .then(data => {
+                    atualizarStatus(data.status);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao controlar a fechadura');
+                });
+        }
+
+        function atualizarStatus(status) {
+            const lockStatus = document.getElementById('lockStatus');
+            const lockIcon = document.querySelector('.lock-icon');
+            
+            if (status === 'aberta') {
+                lockStatus.textContent = "Fechadura: ABERTA";
+                lockStatus.classList.add('open');
+                isLockOpen = true;
+            } else {
+                lockStatus.textContent = "Fechadura: TRANCADA";
+                lockStatus.classList.remove('open');
+                isLockOpen = false;
+            }
+        }
+
+        function verificarStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    atualizarStatus(data.status);
+                });
+        }
+
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const loginPassword = document.getElementById('loginPassword').value;
+
+            if (loginPassword === currentPassword) {
+                showPage('page4');
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
+
+        document.getElementById('checkPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const checkPassword = document.getElementById('checkPasswordInput').value;
+            
+            if (checkPassword === currentPassword) {
+                showPage('page3');
+            } else {
+                alert('Senha atual incorreta!');
+            }
+        });
+
+        document.getElementById('formNewPassword').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+  
+            if (newPassword === confirmPassword) {
+                if (newPassword.length > 0) {
+                    currentPassword = newPassword;
+                    showPage('page5');
+                } else {
+                    alert('A senha não pode estar vazia!');
+                }
+            } else {
+                alert('As senhas não coincidem!');
+            }
+        });
+
+        setInterval(verificarStatus, 5000);
+    </script>
 </body>
 </html>
